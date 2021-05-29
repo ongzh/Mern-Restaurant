@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 import React, { Component } from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle
 ,Breadcrumb, BreadcrumbItem, Modal, ModalHeader, ModalBody,  Label, Button, Row,Col} from 'reactstrap';
@@ -19,8 +20,8 @@ const required = (val) => val && val.length;
         }
             
     handleSubmit(values){
-        console.log("Current State is: " + JSON.stringify(values));
-        alert("Current State is: " + JSON.stringify(values));
+        this.toggleModal();
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
     }
 
     toggleModal() {
@@ -43,8 +44,9 @@ const required = (val) => val && val.length;
                             <Row className="form-group">
                             <Label htmlFor="rating" md={12}>Rating</Label>
                             <Col md={12}>
+                            
                             <Control.select model=".rating" name="rating"
-                            className="form-control" validators={{required}}>
+                            className="form-control">
                                     <option>1</option>
                                     <option>2</option>
                                     <option>3</option>
@@ -52,14 +54,7 @@ const required = (val) => val && val.length;
                                     <option>5</option>
                             </Control.select>
                             </Col>
-                            <Errors
-                                    className = 'text-danger'
-                                    model=".rating"
-                                    show="touched"
-                                    messages={{
-                                        required: 'Required '
-                                    }}
-                                    />
+                            
                             </Row>
 
                             <Row className="form-group">
@@ -126,7 +121,7 @@ const required = (val) => val && val.length;
                 );
         }
 
-    function RenderComments({comments}){
+    function RenderComments({comments, addComment, dishId}){
             if (comments!=null){
                 let commlist = comments.map((comment) => {
                     let date = new Intl.DateTimeFormat('en-US', {
@@ -146,7 +141,7 @@ const required = (val) => val && val.length;
                     <div className="col-12 col-md-5 m-1">
                         <h4>Comments</h4>
                         {commlist}
-                        <CommentForm/>
+                        <CommentForm dishId={dishId} addComment={addComment}/>
                     </div>
                                     
                 );}
@@ -180,7 +175,9 @@ const required = (val) => val && val.length;
                 </div>
                 <div className="row">
                     <RenderDish dish={props.dish} />
-                    <RenderComments comments={props.comments} />
+                    <RenderComments comments={props.comments}
+                    addComment={props.addComment}
+                    dishId={props.dish.id} />
                     
                 </div>
                 </div>
