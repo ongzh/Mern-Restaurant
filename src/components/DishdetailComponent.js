@@ -23,7 +23,7 @@ const required = (val) => val && val.length;
             
     handleSubmit(values){
         this.toggleModal();
-        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
+        this.props.postComment(this.props.dishId, values.rating, values.author, values.comment);
     }
 
     toggleModal() {
@@ -123,7 +123,7 @@ const required = (val) => val && val.length;
                 );
         }
 
-    function RenderComments({comments, addComment, dishId}){
+    function RenderComments({comments, postComment, dishId}){
             if (comments!=null){
                 let commlist = comments.map((comment) => {
                     let date = new Intl.DateTimeFormat('en-US', {
@@ -143,7 +143,7 @@ const required = (val) => val && val.length;
                     <div className="col-12 col-md-5 m-1">
                         <h4>Comments</h4>
                         {commlist}
-                        <CommentForm dishId={dishId} addComment={addComment}/>
+                        <CommentForm dishId={dishId} postComment={postComment}/>
                     </div>
                                     
                 );}
@@ -195,7 +195,7 @@ const required = (val) => val && val.length;
                 <div className="row">
                     <RenderDish dish={props.dish} />
                     <RenderComments comments={props.comments}
-                    addComment={props.addComment}
+                    postComment={props.postComment}
                     dishId={props.dish.id} />
                     
                 </div>
