@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { Component } from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle
+import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle
 ,Breadcrumb, BreadcrumbItem, Modal, ModalHeader, ModalBody,  Label, Button, Row,Col} from 'reactstrap';
 import {Link} from 'react-router-dom';
 import {Control, LocalForm, Errors} from "react-redux-form";
@@ -111,7 +111,7 @@ const required = (val) => val && val.length;
 
 
 
-    function RenderDish({dish}) {
+    function RenderDish({dish, favourite, postFavourite}) {
             return(
                 <div  className="col-12 col-md-5 m-1">
                 <FadeTransform in 
@@ -120,6 +120,15 @@ const required = (val) => val && val.length;
                 }}>
                     <Card>
                         <CardImg top src={baseUrl + dish.image} alt={dish.name} />
+                        <CardImgOverlay>
+                                <Button outline color="primary" onClick={() => favourite ? console.log('Already favourite') : postFavourite(dish._id)}>
+                                    {favourite ?
+                                        <span className="fa fa-heart"></span>
+                                        : 
+                                        <span className="fa fa-heart-o"></span>
+                                    }
+                                </Button>
+                            </CardImgOverlay>
                         <CardBody>
                           <CardTitle>{dish.name}</CardTitle>
                           <CardText>{dish.description}</CardText>

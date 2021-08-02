@@ -5,7 +5,8 @@ import Contact from './ContactComponent';
 import DishDetail from './DishdetailComponent';
 import About from './AboutComponent';
 import Header from './HeaderComponent';
-import Footer from './FooterComponent'
+import Footer from './FooterComponent';
+import Favourites from './FavouriteComponent';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 import { connect } from 'react-redux';
 import {postComment, postFeedback, fetchDishes, fetchComments, fetchPromos, fetchLeaders} from '../redux/ActionCreators';
@@ -71,16 +72,41 @@ class Main extends Component {
 
     const DishWithId = ({match}) =>{
         return (
+            this.props.auth.isAuthenticated
+            ?
             <DishDetail dish={this.props.dishes.dishes.filter((dish)=> dish.id=== parseInt(match.params.dishId,10))[0]}
             isLoading={this.props.dishes.isLoading}
             errMess = {this.props.dishes.errMess}
             comments = {this.props.comments.comments.filter((comment)=> comment.dishId === parseInt(match.params.dishId,10))}
             commentsErrMess = {this.props.comments.errMess}
             postComment={this.props.postComment}
+            favourite={this.props.favourites.favourites.dishes.some((dish) => dish._id === match.params.dishId)}
+            postfavourite={this.props.postfavourite}
+            />
+            :
+            <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish._id === match.params.dishId)[0]}
+            isLoading={this.props.dishes.isLoading}
+            errMess={this.props.dishes.errMess}
+            comments={this.props.comments.comments.filter((comment) => comment.dish === match.params.dishId)}
+            commentsErrMess={this.props.comments.errMess}
+            postComment={this.props.postComment}
+            favourite={false}
+            postFavourite={this.props.postFavourite}
             />
         );
 
     };
+    const PrivateRoute = ({ component: Component, ...rest }) => (
+      <Route {...rest} render={(props) => (
+        this.props.auth.isAuthenticated
+          ? <Component {...props} />
+          : <Redirect to={{
+              pathname: '/home',
+              state: { from: props.location }
+            }} />
+      )} />
+    );
+
 
     return (
       <div>
@@ -90,8 +116,9 @@ class Main extends Component {
             <Switch>
                 <Route path="/home" component={HomePage}/>
                 <Route exact path='/menu' component={()=><Menu dishes={this.props.dishes}/>}/>
-                <Route path='/menu/:dishId' component={DishWithId}/>
                 <Route exact path='/aboutus' component = {()=> <About leaders={this.props.leaders}/>} />
+                <Route path='/menu/:dishId' component={DishWithId}/>
+                <PrivateRoute exact path="/favourites" component={() => <Favourites favourites={this.props.favourites} deleteFavourite={this.props.deleteFavourite} />} />
                 <Route exact path='/contactus' component={()=><Contact resetFeedbackForm={this.props.resetFeedbackForm} postFeedback = {this.props.postFeedback}/>}/>
                 <Redirect to="/home"/>
             </Switch>
