@@ -289,7 +289,7 @@ export const loginUser = (creds) => (dispatch) => {
             localStorage.setItem('token', response.token);
             localStorage.setItem('creds', JSON.stringify(creds));
             // Dispatch the success action 
-            dispatch(fetchfavourites());
+            dispatch(fetchFavourites());
             dispatch(receiveLogin(response));
         }
         else {
@@ -380,7 +380,7 @@ export const deleteFavourite= (dishId) => (dispatch) => {
     .catch(error => dispatch(favouritesFailed(error.message)));
 };
 
-export const fetchfavourites = () => (dispatch) => {
+export const fetchFavourites = () => (dispatch) => {
     dispatch(favouritesLoading(true));
     //authorisation (user authentication)
     const bearer = 'Bearer ' + localStorage.getItem('token');

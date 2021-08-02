@@ -9,7 +9,7 @@ import Footer from './FooterComponent';
 import Favourites from './FavouriteComponent';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 import { connect } from 'react-redux';
-import {postComment, postFeedback, fetchDishes, fetchComments, fetchPromos, fetchLeaders} from '../redux/ActionCreators';
+import {postComment, postFeedback, fetchDishes, fetchComments, fetchPromos, fetchLeaders,loginUser, logoutUser, fetchFavourites, postFavourite, deleteFavourite} from '../redux/ActionCreators';
 import {actions} from 'react-redux-form';
 import {TransitionGroup, CSSTransition} from 'react-transition-group'
 
@@ -19,7 +19,9 @@ const mapStateToProps = state =>{
       dishes: state.dishes,
       comments: state.comments,
       promotions: state.promotions,
-      leaders: state.leaders
+      leaders: state.leaders,
+      favourites: state.favourites,
+      auth: state.auth
     }
 }
 
@@ -30,7 +32,14 @@ const mapDispatchToProps = (dispatch) => ({
   resetFeedbackForm: () => {dispatch(actions.reset('feedback'))},
   fetchComments: () =>{dispatch(fetchComments())},
   fetchPromos: () =>{dispatch(fetchPromos())},
-  fetchLeaders: () => {dispatch(fetchLeaders())}
+  fetchLeaders: () => {dispatch(fetchLeaders())},
+  postFeedback: (feedback) => dispatch(postFeedback(feedback)),
+  loginUser: (creds) => dispatch(loginUser(creds)),
+  logoutUser: () => dispatch(logoutUser()),
+  fetchFavourites: () => dispatch(fetchFavourites()),
+  postFavourite: (dishId) => dispatch(postFavourite(dishId)),
+  deleteFavourite: (dishId) => dispatch(deleteFavourite(dishId))
+
 })
 
 
@@ -46,6 +55,7 @@ class Main extends Component {
     this.props.fetchComments();
     this.props.fetchPromos();
     this.props.fetchLeaders();
+    this.props.fetchFavourites();
   }
 
   onDishSelect(dishId) {
@@ -57,13 +67,13 @@ class Main extends Component {
     const HomePage = () =>{
         return(
             <Home 
-            dish={this.props.dishes.dishes.filter((dish)=>dish.featured)[0]}
+            dish={this.props.dishes.dishes.filter((dish)=>dish.featued)[0]}
             dishesLoading={this.props.dishes.isLoading}
             dishesErrMess = {this.props.dishes.errMess}
-            promotion={this.props.promotions.promotions.filter((promo)=>promo.featured)[0]}
+            promotion={this.props.promotions.promotions.filter((promo)=>promo.featued)[0]}
             promosLoading={this.props.promotions.isLoading}
             promosErrMess = {this.props.promotions.errMess}
-            leader={this.props.leaders.leaders.filter((leader)=>leader.featured)[0]}
+            leader={this.props.leaders.leaders.filter((leader)=>leader.featued)[0]}
             leadersLoading = {this.props.leaders.isLoading}
             leadersErrMess = {this.props.leaders.errMess}
             />
@@ -96,6 +106,7 @@ class Main extends Component {
         );
 
     };
+
     const PrivateRoute = ({ component: Component, ...rest }) => (
       <Route {...rest} render={(props) => (
         this.props.auth.isAuthenticated
@@ -110,11 +121,13 @@ class Main extends Component {
 
     return (
       <div>
-        <Header />
+        <Header auth={this.props.auth} 
+          loginUser={this.props.loginUser} 
+          logoutUser={this.props.logoutUser}  />
         <TransitionGroup>
           <CSSTransition key={this.props.location.key} classNames='page' timeout={300}>
             <Switch>
-                <Route path="/home" component={HomePage}/>
+                <Route path="/home" component={HomePage} />
                 <Route exact path='/menu' component={()=><Menu dishes={this.props.dishes}/>}/>
                 <Route exact path='/aboutus' component = {()=> <About leaders={this.props.leaders}/>} />
                 <Route path='/menu/:dishId' component={DishWithId}/>
