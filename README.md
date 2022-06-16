@@ -1,5 +1,5 @@
 # Getting Started with Create React App
-*Restaurant site with online menu, login, checkout. Project was built for the Full Stack Web dev Specialization on Coursera.*
+*Restaurant site with online menu, login, checkout. Project was completed for the Full Stack Web dev Specialization on Coursera.*
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
